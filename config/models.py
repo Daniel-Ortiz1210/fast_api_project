@@ -21,8 +21,16 @@ class UserTable(Base):
 
 def init_db(drop_all_tables=False):
     if drop_all_tables:
-        print("Droping all tables")
-        Base.metadata.drop_all(bind=engine)
+        try:
+            print("Droping all tables...")
+            Base.metadata.drop_all(bind=engine)
+            print("SUCCESS")
+        except:
+            print("Error while droping tables")
     else:
-        print("Creating all tables")
-        Base.metadata.create_all(bind=engine)
+        try:
+            print("Creating all tables...")
+            Base.metadata.create_all(bind=engine)
+            print("SUCCESS")
+        except:
+            print("Error while creating tables")
