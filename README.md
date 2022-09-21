@@ -23,10 +23,10 @@ MacOS 🖥
 
 Inside this folder...
 
-- Create a virtual environment: python3 -m venv _name_
-- Activate virtual environment: source _name_/bin/activate
-- Install packages: pip install -r requirements.txt
-- Run server: uvicorn main:app --reload
+- Create a virtual environment: *python3 -m venv _name_*
+- Activate virtual environment: *source _name_/bin/activate*
+- Install packages: *pip install -r requirements.txt*
+- Run server: *uvicorn main:app --reload*
 
 Database config... 
 - Download MySQL
