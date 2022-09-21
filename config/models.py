@@ -2,7 +2,7 @@ from .db import engine, Base
 from sqlalchemy import Table, Column
 from sqlalchemy.sql.sqltypes import String, Integer, DateTime
 
-class UserTable(Base):
+class UserORM(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)

@@ -11,7 +11,7 @@ from fastapi import Body, Query, Path, Form, Cookie, Header, UploadFile, File, s
 from fastapi.security import OAuth2PasswordRequestForm
 
 from config.db import session
-from config.models import UserTable
+from config.models import UserORM
 
 from schemas.models import User, UserType, LoginResponse, UserResponse, UserPatch
 
@@ -68,7 +68,7 @@ async def get_all_users(user_agent: Optional[str] = Cookie(None), header: Option
     Returns:
         List[User]: Devolver lista de usuarios
     """
-    return session.query(UserTable).all()
+    return session.query(UserORM).all()
 
 @user_router.post(path="/users/create", response_model=UserResponse, response_model_exclude=['password'], status_code=status.HTTP_201_CREATED, tags=["Users"])
 async def create_user(
@@ -89,11 +89,8 @@ async def create_user(
     user = user.dict()
     user["password"] = get_password_hash(user["password"])
 
-    if user["user_type"] not in ["basic", "admin", "staff"]:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="MAL")
-
     try:
-        new_user = UserTable(**user)
+        new_user = UserORM(**user)
         session.add(new_user)
         session.commit()
     except:
@@ -123,7 +120,7 @@ async def get_user(
     Returns:
         UserResponse:  
     """
-    user = session.query(UserTable).filter(UserTable.id == id).one_or_none()
+    user = session.query(UserORM).filter(UserORM.id == id).one_or_none()
 
     if not user:
         raise user_not_found_excep()
@@ -156,7 +153,7 @@ async def update_user(
     Returns:
         UserResponse: Usuario actualizado
     """
-    user = session.query(UserTable).filter(UserTable.id == id).one_or_none()
+    user = session.query(UserORM).filter(UserORM.id == id).one_or_none()
 
     if not user:
         raise user_not_found_excep()
@@ -185,7 +182,7 @@ async def delete_user(
     Raises:
         user_not_found_excep: Excepcion leventada si el usuario no es encontrado en la base de datos
     """
-    user = session.query(UserTable).filter(UserTable.id == id).one_or_none()
+    user = session.query(UserORM).filter(UserORM.id == id).one_or_none()
 
     if not user:
         raise user_not_found_excep()

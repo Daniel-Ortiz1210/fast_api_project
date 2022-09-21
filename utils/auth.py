@@ -8,7 +8,7 @@ from jose import jwt
 
 from passlib.context import CryptContext
 
-from config.models import UserTable
+from config.models import UserORM
 from config.db import session
 from hashing_mod import bcrypt_context
 
@@ -33,7 +33,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt_context.verify(plain_password, hashed_password)
 
 
-def authenticate_user(email: str, password: str, session: Session) -> UserTable:
+def authenticate_user(email: str, password: str, session: Session) -> UserORM:
     """
 
     Conprobaremos que el usuario exista y que la contraseña en texto plano coincida con su version hasheada.
@@ -44,9 +44,9 @@ def authenticate_user(email: str, password: str, session: Session) -> UserTable:
         session (Session):
 
     Returns:
-        UserTable: Devolvemos el usuario encontrado
+        UserORM: Devolvemos el usuario encontrado
     """
-    user = session.query(UserTable).filter(UserTable.email == email).one_or_none()
+    user = session.query(UserORM).filter(UserORM.email == email).one_or_none()
 
     if not user:
         return False
