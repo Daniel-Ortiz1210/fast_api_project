@@ -1,34 +1,21 @@
 ***Project Overview:***
 
+Simple API to query, update, create and delete users connected to a MySQL database.
 
+**Tech Stack:**👨🏻‍💻
 
-**Tech Stack:**
-
-anyio==3.6.1
-bcrypt==4.0.0
-cffi==1.15.1
-click==8.1.3
-cryptography==38.0.1
-dnspython==2.2.1
-ecdsa==0.18.0
-email-validator==1.2.1
-fastapi==0.83.0
-h11==0.13.0
-idna==3.4
-passlib==1.7.4
-pyasn1==0.4.8
-pycparser==2.21
-pydantic==1.10.2
-PyMySQL==1.0.2
-python-jose==3.3.0
-python-multipart==0.0.5
-rsa==4.9
-six==1.16.0
-sniffio==1.3.0
-SQLAlchemy==1.4.41
-starlette==0.19.1
-typing_extensions==4.3.0
-uvicorn==0.18.3
+- bcrypt==4.0.0
+- cryptography==38.0.1
+- email-validator==1.2.1
+- fastapi==0.83.0
+- passlib==1.7.4
+- pydantic==1.10.2
+- PyMySQL==1.0.2
+- python-jose==3.3.0
+- python-multipart==0.0.5
+- SQLAlchemy==1.4.41
+- starlette==0.19.1
+- uvicorn==0.18.3
 
 **How To Run:**
 
