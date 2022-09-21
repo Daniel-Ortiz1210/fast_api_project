@@ -7,6 +7,6 @@ PASSWORD = "Dex122706"
 DB = "users"
 
 engine = create_engine(f"mysql+pymysql://{USER}:{PASSWORD}@localhost:3306/{DB}")
-sessionmaker = sessionmaker(bind=engine,autocommit=False, autoflush=False)
+sessionmaker = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 session = scoped_session(sessionmaker)
 Base = declarative_base()

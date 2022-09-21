@@ -17,12 +17,12 @@ class User(BaseModel):
     email: EmailStr = Field(..., title="User email")
     password: str = Field(..., min_length=8, max_length=50)
     
-    curp: str = Field(max_length=18)
-    rfc: str = Field(max_length=13)
-    cp: str = Field(max_length=5)
-    telephone: str = Field(max_length=10)
-    user_type: UserType = Field(title="User Type")
-    date: datetime = Field(default=datetime.now())
+    curp: Optional[str] = Field(None, max_length=18)
+    rfc: Optional[str] = Field(None, max_length=13)
+    cp: Optional[str] = Field(None, max_length=5)
+    telephone: Optional[str] = Field(None, max_length=10)
+    user_type: Optional[UserType] = Field(UserType.basic, title="User Type")
+    date: Optional[datetime] = Field(default=datetime.now())
     age: Optional[PositiveInt] = Field(default=None,title="User age")
 
     class Config:
@@ -31,8 +31,9 @@ class User(BaseModel):
                 "first_name": "Juan",
                 "last_name": "Perez",
                 "password": "password",
-                "age": 20,
                 "email": "juanp@ejemplo.com",
+                
+                "age": 20,
                 "user_type": UserType.basic,
                 "curp": "ARDFC123456098HGTY",
                 "cp": "12345",
