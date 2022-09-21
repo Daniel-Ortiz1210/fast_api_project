@@ -2,7 +2,7 @@
 
 Simple API to query, update, create and delete users connected to a MySQL database.
 
-**Tech Stack:**👨🏻‍💻
+**Tech Stack:** 👨🏻‍💻
 
 - bcrypt==4.0.0
 - cryptography==38.0.1
