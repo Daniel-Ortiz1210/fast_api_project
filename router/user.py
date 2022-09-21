@@ -30,7 +30,7 @@ def upload_image(image: UploadFile = File(...)):
         "size(kb)": round(len(image.file.read()) / 1024, 2) 
     }
 
-@user_router.post(path="/login",status_code=status.HTTP_202_ACCEPTED, response_model=LoginResponse, response_model_exclude=["password"], tags=["Auth"])
+@user_router.post(path="/login",status_code=status.HTTP_202_ACCEPTED, response_model=LoginResponse, response_model_exclude=["password"], tags=["Auth"], deprecated=True)
 async def login(email: str = Form(...), password: str = Form(...)):   
     return LoginResponse(email=email, password=password)
 
@@ -97,6 +97,7 @@ async def create_user(
         session.add(new_user)
         session.commit()
     except:
+        session.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No pudimos crear el usuario")
     
     return new_user

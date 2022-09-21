@@ -8,7 +8,7 @@ class UserTable(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(String(50)) 
     last_name = Column(String(50))
-    email = Column(String(50))
+    email = Column(String(50), unique=True)
     password = Column(String(255))
     age = Column(Integer)
     curp = Column(String(18))
@@ -19,8 +19,10 @@ class UserTable(Base):
     user_type = Column(String(20))
 
 
-def init_db(initialize=True):
-    if initialize:
-        Base.metadata.create_all(bind=engine)
-    else:
+def init_db(drop_all_tables=False):
+    if drop_all_tables:
+        print("Droping all tables")
         Base.metadata.drop_all(bind=engine)
+    else:
+        print("Creating all tables")
+        Base.metadata.create_all(bind=engine)

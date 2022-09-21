@@ -7,4 +7,4 @@ app = FastAPI()
 # Routers
 app.include_router(user_router)
 
-init_db()
+init_db(drop_all_tables=False)
