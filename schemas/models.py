@@ -1,8 +1,9 @@
-# Pydantic
-from pydantic import BaseModel, Field, PositiveInt, EmailStr, validator, ValidationError
 from typing import Optional, List
 from enum import Enum
 from datetime import date,datetime
+import re
+
+from pydantic import BaseModel, Field, PositiveInt, EmailStr, validator, ValidationError
 
 
 def normalize_user_names(name: str) -> str:
@@ -21,17 +22,17 @@ class User(BaseModel):
     email: EmailStr = Field(..., title="Email")
     password: str = Field(..., min_length=8, max_length=50, title="Constraseña")
     
-    curp: Optional[str] = Field(None, title="Clave Unica de Registro de Poblacion")
-    rfc: Optional[str] = Field(None, title="Registro Federal del Contribuyente")
-    cp: Optional[str] = Field(None, title="Codigo Postal")
-    telephone: Optional[str] = Field(None, max_length=10)
+    curp: Optional[str] = Field(None, title="Clave Unica de Registro de Poblacion", max_length=13, min_length=13)
+    rfc: Optional[str] = Field(None, title="Registro Federal del Contribuyente", max_length=18, min_length=18)
+    cp: Optional[str] = Field(None, title="Codigo Postal", max_length=5, min_length=5)
+    telephone: Optional[str] = Field(None, max_length=10, min_length=10)
     user_type: Optional[UserType] = Field(UserType.basic, title="Tipo de usuario")
     date: Optional[datetime] = Field(datetime.now(), title="Fecha")
     age: Optional[PositiveInt] = Field(None,title="Edad")
 
     _normalize_first_name = validator("first_name", allow_reuse=True, always=True)(normalize_user_names)
     _normalize_last_name = validator("last_name", allow_reuse=True, always=True)(normalize_user_names)
-    
+
 
     class Config:
         schema_extra = {
@@ -52,20 +53,10 @@ class User(BaseModel):
         orm_mode = True
     
     @validator('cp')
-    def validate_first_2_chars(cls, v):
-        if v is None: return None
-        
-        if v[:2] == '00':
-            raise ValueError("Los primeros dos caracteres no deben ser '00'")
-        if len(v) < 5 or len(v) > 5:
-            raise ValueError("La longitud requerida son 5 caracteres")
-        
+    def validate_cp(cls, v):
+        if re.findall("^00", v) or re.findall("[+]", v) or re.findall("[a-zA-Z]", v) or len(v) != 5:
+            raise ValueError("Codigo Postal inválido")
         return v
-    
-
-
-        
-
 
 
 class LoginResponse(BaseModel):
