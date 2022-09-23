@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, PositiveInt, EmailStr, validator, Validat
 
 
 def normalize_user_names(name: str) -> str:
-    if re.findall("[+]", v):
+    if re.findall("[+]", name):
         return ValueError("Nombre inválido")
     return name.title()
 
@@ -54,30 +54,29 @@ class User(BaseModel):
         }
         orm_mode = True
     
-    @validator('cp')
+    @validator('cp', pre=True)
     def validate_cp(cls, v) -> str:
         if len(v) != 5:
-            return ValueError("El formato oficial son 18 caracteres")
+            raise ValueError("El formato oficial son 5 caracteres")
 
         if re.findall("^00", v) or re.findall("[+]", v) or re.findall("[a-zA-Z]", v):
-            return ValueError("Codigo Postal inválido")
+            raise ValueError("Codigo Postal inválido")
         
         return v
     
-    @validator("curp")
+    @validator("curp", pre=True)
     def validate_curp(cls, v):
 
         if len(v) != 18:
-            return ValueError("El formato oficial son 18 caracteres")
+            raise ValueError("El formato oficial son 18 caracteres")
 
         first_4_chars = v[:4]
         intermediate_nums = v[4:10]
 
         if re.findall("[0-9]", first_4_chars) or re.findall("[a-zA-Z]", intermediate_nums) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
-            return ValueError("CURP no cumple con el formato oficial")
+            raise ValueError("CURP no cumple con el formato oficial")
         
         return v
-
 
 class LoginResponse(BaseModel):
     email: EmailStr = Field(...)

@@ -6,7 +6,7 @@ from utils.exceptions import user_not_found_excep
 from utils.auth import authenticate_user, generate_access_token
 from utils.utils import update_obj_from_dict
 
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Response, status, Request
 from fastapi import Body, Query, Path, Form, Cookie, Header, UploadFile, File, status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -17,7 +17,17 @@ from schemas.models import User, UserType, LoginResponse, UserResponse, UserPatc
 
 from hashing_mod import get_password_hash
 
+from sqlalchemy.exc import IntegrityError
 
+from pydantic import ValidationError
+
+def jsonify_validation_errors(error: ValidationError) -> dict:
+    ret = {}
+    
+    for _ in error.args[0]: 
+        ret[str(_._loc)] = str(_.exc)
+    
+    return ret
 
 user_router = APIRouter()
 
@@ -70,11 +80,9 @@ async def get_all_users(user_agent: Optional[str] = Cookie(None), header: Option
     """
     return session.query(UserORM).all()
 
-@user_router.post(path="/users/create", response_model=UserResponse, response_model_exclude=['password'], status_code=status.HTTP_201_CREATED, tags=["Users"])
+@user_router.post(path="/users/create", status_code=status.HTTP_201_CREATED, tags=["Users"], response_model=UserResponse, response_model_exclude=["password"])
 async def create_user(
-    user: User = Body(
-        ...
-        )
+    request: Request
     ):
     """
 
@@ -86,17 +94,23 @@ async def create_user(
     Returns:
         UserResponse: Usuario recien creado
     """
-    user = user.dict()
+    user = await request.json()
+    try:
+        User.validate(user)
+    except ValidationError as e:
+        ret = jsonify_validation_errors(e)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=ret)
+    
+    user = User(**user).dict()
     user["password"] = get_password_hash(user["password"])
-
     try:
         new_user = UserORM(**user)
         session.add(new_user)
         session.commit()
-    except:
+    except IntegrityError as e:
         session.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No pudimos crear el usuario")
-    
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail={"message": "No pudimos crear el usuario", "error": e.__dict__})
+
     return new_user
 
 @user_router.get(path="/users/{id}", status_code=status.HTTP_200_OK, tags=["Users"], summary="Show User", response_model=UserResponse, response_model_exclude=["password"])
