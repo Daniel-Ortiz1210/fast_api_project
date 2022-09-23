@@ -56,8 +56,12 @@ class User(BaseModel):
     
     @validator('cp')
     def validate_cp(cls, v) -> str:
-        if re.findall("^00", v) or re.findall("[+]", v) or re.findall("[a-zA-Z]", v) or len(v) != 5:
+        if len(v) != 5:
+            return ValueError("El formato oficial son 18 caracteres")
+
+        if re.findall("^00", v) or re.findall("[+]", v) or re.findall("[a-zA-Z]", v):
             return ValueError("Codigo Postal inválido")
+        
         return v
     
     @validator("curp")
@@ -71,6 +75,8 @@ class User(BaseModel):
 
         if re.findall("[0-9]", first_4_chars) or re.findall("[a-zA-Z]", intermediate_nums) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
             return ValueError("CURP no cumple con el formato oficial")
+        
+        return v
 
 
 class LoginResponse(BaseModel):
