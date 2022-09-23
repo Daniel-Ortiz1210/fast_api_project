@@ -109,7 +109,7 @@ async def create_user(
         session.commit()
     except IntegrityError as e:
         session.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail={"message": "No pudimos crear el usuario", "error": e.__dict__})
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No pudimos guardar tus datos correctamente. Vuelve a intentarlo mas tarde.")
 
     return new_user
 
