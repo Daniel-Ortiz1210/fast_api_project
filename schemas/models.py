@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field, PositiveInt, EmailStr, validator, Validat
 
 
 def normalize_user_names(name: str) -> str:
+    if re.findall("[+]", v):
+        return ValueError("Nombre inválido")
     return name.title()
 
 class UserType(str, Enum):
@@ -22,8 +24,8 @@ class User(BaseModel):
     email: EmailStr = Field(..., title="Email")
     password: str = Field(..., min_length=8, max_length=50, title="Constraseña")
     
-    curp: Optional[str] = Field(None, title="Clave Unica de Registro de Poblacion", max_length=13, min_length=13)
-    rfc: Optional[str] = Field(None, title="Registro Federal del Contribuyente", max_length=18, min_length=18)
+    curp: Optional[str] = Field(None, title="Clave Unica de Registro de Poblacion", max_length=18, min_length=18)
+    rfc: Optional[str] = Field(None, title="Registro Federal del Contribuyente", max_length=13, min_length=13)
     cp: Optional[str] = Field(None, title="Codigo Postal", max_length=5, min_length=5)
     telephone: Optional[str] = Field(None, max_length=10, min_length=10)
     user_type: Optional[UserType] = Field(UserType.basic, title="Tipo de usuario")
@@ -53,10 +55,22 @@ class User(BaseModel):
         orm_mode = True
     
     @validator('cp')
-    def validate_cp(cls, v):
+    def validate_cp(cls, v) -> str:
         if re.findall("^00", v) or re.findall("[+]", v) or re.findall("[a-zA-Z]", v) or len(v) != 5:
-            raise ValueError("Codigo Postal inválido")
+            return ValueError("Codigo Postal inválido")
         return v
+    
+    @validator("curp")
+    def validate_curp(cls, v):
+
+        if len(v) != 18:
+            return ValueError("El formato oficial son 18 caracteres")
+
+        first_4_chars = v[:4]
+        intermediate_nums = v[4:10]
+
+        if re.findall("[0-9]", first_4_chars) or re.findall("[a-zA-Z]", intermediate_nums) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
+            return ValueError("CURP no cumple con el formato oficial")
 
 
 class LoginResponse(BaseModel):
