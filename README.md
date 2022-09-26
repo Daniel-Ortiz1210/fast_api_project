@@ -29,7 +29,7 @@ Inside this folder...
 - Run server: *uvicorn main:app --reload*
 
 Database config... 
-- Download MySQL
+- Download MySQL Workbench
 - Create a DB named *users* hosted by localhost and your root user as the user.
 - You could modify these defaults in *fast_api_project/config/db.py*
 
