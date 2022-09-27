@@ -14,8 +14,6 @@ def update_obj_from_dict(obj, dict, excl=[]):
     """
     
     for k, v in dict.items():
-        if k in excl or v == None:
-            continue
-        if k == "password":
-            v = get_password_hash(v)
+        if k in excl or v == None: continue
+        if k == "password": v = get_password_hash(v)
         setattr(obj, k, v)

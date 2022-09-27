@@ -71,12 +71,26 @@ class User(BaseModel):
             raise ValueError("El formato oficial son 18 caracteres")
 
         first_4_chars = v[:4]
-        intermediate_nums = v[4:10]
+        intermediate_chars = v[4:10]
 
-        if re.findall("[0-9]", first_4_chars) or re.findall("[a-zA-Z]", intermediate_nums) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
+        if re.findall("[0-9]", first_4_chars) or re.findall("[a-zA-Z]", intermediate_chars) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
             raise ValueError("CURP no cumple con el formato oficial")
         
         return v
+
+    @validator("rfc", pre=True)
+    def validate_rfc(cls, v):
+        if len(v) != 13:
+            raise ValueError("El formato ofical son 13 caracteres")
+        
+        first_4_chars = v[:4]
+        intermediate_chars = v[4:10]
+
+        if re.findall("[0-9]", first_4_chars) or re.findall("[a-zA-Z]", intermediate_chars) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
+            raise ValueError("CURP no cumple con el formato oficial")
+        
+        return v
+
 
 class LoginResponse(BaseModel):
     email: EmailStr = Field(...)
