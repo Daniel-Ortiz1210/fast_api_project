@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, PositiveInt, EmailStr, validator, Validat
 
 def normalize_user_names(name: str) -> str:
     if re.findall("[+]", name):
-        return ValueError("Nombre inválido")
+        return ValueError("Caracteres espaciales no son validos")
     return name.title()
 
 class UserType(str, Enum):
@@ -88,6 +88,17 @@ class User(BaseModel):
 
         if re.findall("[0-9]", first_4_chars) or re.findall("[a-zA-Z]", intermediate_chars) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
             raise ValueError("CURP no cumple con el formato oficial")
+        
+        return v
+    
+    @validator("telephone", pre=True)
+    def validate_telephone(cls, v):
+
+        if len(v) != 10:
+            raise ValueError("Numero telefonico son 10 digitos")
+
+        if re.findall( "[a-zA-Z]", v) or re.findall("[$&+,:;=?@#|'<>.^*()%!-]", v):
+            raise ValueError("Numero telefonico no cumple con el formato oficial")
         
         return v
 
